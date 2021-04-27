@@ -13,6 +13,13 @@ import java.util.logging.Logger;
  */
 public class DefaultValidator implements Validator{
 
+    /**
+     * Test null violation
+     * @param value
+     * @param notNull
+     * @param collection
+     * @param fieldName
+     */
     public void testNull(String value, NotNull notNull, Collection<Violation> collection, String fieldName) {
         if(value == null) {
             Collection<String> messages = new ArrayList<>();
@@ -25,6 +32,13 @@ public class DefaultValidator implements Validator{
         }
     }
 
+    /**
+     * Test regrex violation
+     * @param value
+     * @param regrex
+     * @param collection
+     * @param fieldName
+     */
     public void testRegex(String value, Regrex regrex, Collection<Violation> collection, String fieldName) {
         if (value == null || !value.matches(regrex.pattern())) {
             Collection<String> messages = new ArrayList<>();
@@ -37,6 +51,13 @@ public class DefaultValidator implements Validator{
         }
     }
 
+    /**
+     * Test size violation
+     * @param value
+     * @param size
+     * @param collection
+     * @param fieldName
+     */
     public void testSize(String value, Size size, Collection<Violation> collection, String fieldName) {
         if(value == null || value.length() > size.max() || value.length() < size.min()) {
             Collection<String> messages = new ArrayList<>();
@@ -49,6 +70,13 @@ public class DefaultValidator implements Validator{
         }
     }
 
+    /**
+     * Map type of annotation and find method for test violation
+     * @param annotation
+     * @param violations
+     * @param field
+     * @param value
+     */
     public void mapMethodTest(Annotation annotation, Collection<Violation> violations
             , Field field, Object value) {
         if(annotation.annotationType() == NotNull.class) {
@@ -65,6 +93,13 @@ public class DefaultValidator implements Validator{
         }
     }
 
+    /**
+     * Find all violation depend on type of annotation
+     * @param fieldList
+     * @param data
+     * @return
+     * @throws IllegalAccessException
+     */
     public Collection<Violation> findAllViolation(Field [] fieldList, Object data) throws IllegalAccessException {
         Collection<Violation> violationCollection = new ArrayList<>();
         for (Field field : fieldList) {
@@ -82,7 +117,7 @@ public class DefaultValidator implements Validator{
      * {@inheritDoc}
      *
      * @param data Input data
-     * @return
+     * @return collection of violations
      */
     @Override
     public Collection<Violation> validate(Object data) {

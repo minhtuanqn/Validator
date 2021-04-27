@@ -4,6 +4,9 @@ import tuanle.NotNull;
 import tuanle.Regrex;
 import tuanle.Size;
 
+/**
+ * Studen model
+ */
 public class Student {
     @Size(min = 1, max = 3, message = "ID size must be between 1 and 3")
     @Regrex(pattern = "[a-zA-Z]*", message = "ID must be alphabetic characters only")
