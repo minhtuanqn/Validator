@@ -1,16 +1,10 @@
 package tuanle.testing;
 
-import static org.junit.Assert.*;
 
 import org.junit.Assert;
 import org.junit.Test;
 import tuanle.DefaultValidator;
-import tuanle.Staff;
-import tuanle.Violation;
-import static tuanle.testing.TestUtils.*;
-
-import java.util.Arrays;
-import java.util.Collection;
+import tuanle.model.Staff;
 
 /**
  * Validator tester

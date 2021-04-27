@@ -1,6 +1,7 @@
 package tuanle.testing;
 
 import tuanle.*;
+import tuanle.model.Staff;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.*;
 
 public class TestUtils {
 
@@ -34,10 +33,10 @@ public class TestUtils {
      * @throws ClassNotFoundException
      * @throws NoSuchFieldException
      */
-    public static Violation testNullViolation(String fieldName, Object testedObject)
+    public static Violation testNullStaffViolation(String fieldName, Object testedObject)
             throws ClassNotFoundException, NoSuchFieldException {
         Field field = Staff.class.getClassLoader().
-                loadClass("tuanle.Staff").getDeclaredField(fieldName);
+                loadClass("tuanle.model.Staff").getDeclaredField(fieldName);
         NotNull notNull = field.getAnnotation(NotNull.class);
         if(testedObject == null) {
             Collection<String> messages = new ArrayList<>();
@@ -60,10 +59,10 @@ public class TestUtils {
      * @throws ClassNotFoundException
      * @throws NoSuchFieldException
      */
-    public static Violation testSizeViolation(String fieldName, String testedString)
+    public static Violation testSizeStaffViolation(String fieldName, String testedString)
             throws ClassNotFoundException, NoSuchFieldException {
         Field field = Staff.class.getClassLoader().
-                loadClass("tuanle.Staff").getDeclaredField(fieldName);
+                loadClass("tuanle.model.Staff").getDeclaredField(fieldName);
         Size size = field.getAnnotation(Size.class);
         if(testedString == null || testedString.length() > size.max() || testedString.length() < size.min()) {
             Collection<String> messages = new ArrayList<>();
@@ -86,10 +85,10 @@ public class TestUtils {
      * @throws ClassNotFoundException
      * @throws NoSuchFieldException
      */
-    public static Violation testRegrexViolation(String fieldName, String testedString)
+    public static Violation testRegrexStaffViolation(String fieldName, String testedString)
             throws ClassNotFoundException, NoSuchFieldException {
         Field field = Staff.class.getClassLoader().
-                loadClass("tuanle.Staff").getDeclaredField(fieldName);
+                loadClass("tuanle.model.Staff").getDeclaredField(fieldName);
         Regrex regrex = field.getAnnotation(Regrex.class);
         if(testedString == null || !testedString.matches(regrex.pattern())) {
             Collection<String> messages = new ArrayList<>();
@@ -114,18 +113,19 @@ public class TestUtils {
     public static Collection<Violation> createCollectionOfViolation(Staff staff) {
         Collection<Violation> violationList = new ArrayList<>();
         try {
-            Violation nullFirstNameViolation = testNullViolation("firstName", staff.getFirstName());
-            Violation regexLastnameViolation = testRegrexViolation("lastName", staff.getLastName());
-            Violation sizeLastNameViolation = testSizeViolation("lastName", staff.getLastName());
+            Violation nullFirstNameViolation = testNullStaffViolation("firstName", staff.getFirstName());
+            Violation regexLastnameViolation = testRegrexStaffViolation("lastName", staff.getLastName());
+            Violation sizeLastNameViolation = testSizeStaffViolation("lastName", staff.getLastName());
             if(nullFirstNameViolation != null) {
                 violationList.add(nullFirstNameViolation);
-            }
-            if(regexLastnameViolation != null) {
-                violationList.add(regexLastnameViolation);
             }
             if(sizeLastNameViolation != null) {
                 violationList.add(sizeLastNameViolation);
             }
+            if(regexLastnameViolation != null) {
+                violationList.add(regexLastnameViolation);
+            }
+
 
             return violationList;
         }
@@ -139,6 +139,5 @@ public class TestUtils {
         }
         return null;
     }
-
 
 }

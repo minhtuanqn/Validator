@@ -1,5 +1,7 @@
 package tuanle;
 
+import tuanle.model.Student;
+
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -9,21 +11,22 @@ public class App {
         final Validator validator = new DefaultValidator();
 
         // Validated data
-        final tuanle.Staff staff = new tuanle.Staff();
-        staff.setFirstName(null);
-        staff.setLastName("SD23");
+        final Student student = new Student();
+        student.setFullname(null);
+        student.setId(null);
 
         // Validate and return violation. One violation is only responsible for
         // one field violation. If that field violates multiple constraints, it should
         // have multiple error messages. Please inspect Violation model for details
-        final Collection<Violation> violations = validator.validate(staff);
+        final Collection<Violation> violations = validator.validate(student);
 
-        Iterator<Violation> iterator = violations.iterator();
-        while(iterator.hasNext()) {
-            Violation violation = iterator.next();
-            System.out.println(violation);
+        if(violations != null) {
+            Iterator<Violation> iterator = violations.iterator();
+            while(iterator.hasNext()) {
+                Violation violation = iterator.next();
+                System.out.println(violation);
+            }
         }
-
     }
 
 }

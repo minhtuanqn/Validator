@@ -1,15 +1,15 @@
 package tuanle.model;
 
-import tuanle.annotation.NotNull;
-import tuanle.annotation.Regrex;
-import tuanle.annotation.Size;
+import tuanle.NotNull;
+import tuanle.Regrex;
+import tuanle.Size;
 
 public class Student {
-    @Size(min = 1, max = 3, message = "Last name size must be between 1 and 3")
-    @Regrex(pattern = "[a-zA-Z]*", message = "Last name must be alphabetic characters only")
+    @Size(min = 1, max = 3, message = "ID size must be between 1 and 3")
+    @Regrex(pattern = "[a-zA-Z]*", message = "ID must be alphabetic characters only")
     public String id;
 
-    @NotNull(message = "First name must not be null")
+    @NotNull(message = "Full name must not be null")
     public String fullname;
 
     public String getFullname() {

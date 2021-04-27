@@ -1,8 +1,8 @@
 package tuanle.model;
 
-import tuanle.annotation.NotNull;
-import tuanle.annotation.Regrex;
-import tuanle.annotation.Size;
+import tuanle.NotNull;
+import tuanle.Regrex;
+import tuanle.Size;
 
 /**
  * Staff model

@@ -1,5 +1,6 @@
 package tuanle;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +13,7 @@ import java.util.logging.Logger;
  */
 public class DefaultValidator implements Validator{
 
-    private Field firstnameField;
-    private Field lastnameField;
-
-    private void testNull(String value, NotNull notNull, Collection<Violation> collection, String fieldName) {
+    public void testNull(String value, NotNull notNull, Collection<Violation> collection, String fieldName) {
         if(value == null) {
             Collection<String> messages = new ArrayList<>();
             messages.add(notNull.message());
@@ -27,7 +25,7 @@ public class DefaultValidator implements Validator{
         }
     }
 
-    private void testRegex(String value, Regrex regrex, Collection<Violation> collection, String fieldName) {
+    public void testRegex(String value, Regrex regrex, Collection<Violation> collection, String fieldName) {
         if (value == null || !value.matches(regrex.pattern())) {
             Collection<String> messages = new ArrayList<>();
             messages.add(regrex.message());
@@ -39,7 +37,7 @@ public class DefaultValidator implements Validator{
         }
     }
 
-    private void testSize(String value, Size size, Collection<Violation> collection, String fieldName) {
+    public void testSize(String value, Size size, Collection<Violation> collection, String fieldName) {
         if(value == null || value.length() > size.max() || value.length() < size.min()) {
             Collection<String> messages = new ArrayList<>();
             messages.add(size.message());
@@ -49,6 +47,35 @@ public class DefaultValidator implements Validator{
             violation.setInvalidValue(value);
             collection.add(violation);
         }
+    }
+
+    public void mapMethodTest(Annotation annotation, Collection<Violation> violations
+            , Field field, Object value) {
+        if(annotation.annotationType() == NotNull.class) {
+            NotNull notNull = field.getAnnotation(NotNull.class);
+            testNull((String) value, notNull, violations, field.getName());
+        }
+        if(annotation.annotationType() == Regrex.class) {
+            Regrex regrex = field.getAnnotation(Regrex.class);
+            testRegex((String) value, regrex, violations, field.getName());
+        }
+        if(annotation.annotationType() == Size.class) {
+            Size size = field.getAnnotation(Size.class);
+            testSize((String) value, size, violations, field.getName());
+        }
+    }
+
+    public Collection<Violation> findAllViolation(Field [] fieldList, Object data) throws IllegalAccessException {
+        Collection<Violation> violationCollection = new ArrayList<>();
+        for (Field field : fieldList) {
+            Object value = field.get(data);
+            Annotation [] annotationFieldList = field.getAnnotations();
+            for(int count = 0; count < annotationFieldList.length; count++) {
+                Annotation annotation = annotationFieldList[count];
+                mapMethodTest(annotation, violationCollection, field, value);
+            }
+        }
+        return violationCollection;
     }
 
     /**
@@ -62,32 +89,15 @@ public class DefaultValidator implements Validator{
         if(data == null) {
             throw  new IllegalArgumentException();
         }
-        Collection<Violation> collection = new ArrayList<>();
-        Staff staff = (Staff) data;
-        String firstname = staff.getFirstName();
-        String lastname = staff.getLastName();
-
+        Field fieldList[] = data.getClass().getDeclaredFields();
         try {
-            firstnameField = Staff.class.getClassLoader().
-                    loadClass("tuanle.Staff").getDeclaredField("firstName");
-            lastnameField = Staff.class.getClassLoader().
-                    loadClass("tuanle.Staff").getDeclaredField("lastName");
-            NotNull notNull = firstnameField.getAnnotation(NotNull.class);
-            Regrex regrex = lastnameField.getAnnotation(Regrex.class);
-            Size size = lastnameField.getAnnotation(Size.class);
-
-            testNull(firstname, notNull, collection, "firstName");
-            testRegex(lastname, regrex, collection, "lastName");
-            testSize(lastname, size, collection, "lastName");
+            Collection<Violation> violationCollection = findAllViolation(fieldList, data);
+            return violationCollection;
         }
-        catch (ClassNotFoundException e) {
-            Logger logger = Logger.getLogger("Test");
+        catch (IllegalAccessException e) {
+            Logger logger = Logger.getLogger("Logger");
             logger.log(new LogRecord(Level.SEVERE, e.getMessage()));
         }
-        catch (NoSuchFieldException e) {
-            Logger logger = Logger.getLogger("Test");
-            logger.log(new LogRecord(Level.SEVERE, e.getMessage()));
-        }
-        return collection;
+        return null;
     }
 }
