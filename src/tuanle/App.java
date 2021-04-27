@@ -13,7 +13,7 @@ public class App {
         // Validated data
         final Student student = new Student();
         student.setFullname(null);
-        student.setId(null);
+        student.setId("123");
 
         // Validate and return violation. One violation is only responsible for
         // one field violation. If that field violates multiple constraints, it should

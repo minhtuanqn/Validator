@@ -20,7 +20,7 @@ public class DefaultValidator implements Validator{
      * @param collection
      * @param fieldName
      */
-    public void testNull(String value, NotNull notNull, Collection<Violation> collection, String fieldName) {
+    public void testNull(Object value, NotNull notNull, Collection<Violation> collection, String fieldName) {
         if(value == null) {
             Collection<String> messages = new ArrayList<>();
             messages.add(notNull.message());
@@ -58,8 +58,19 @@ public class DefaultValidator implements Validator{
      * @param collection
      * @param fieldName
      */
-    public void testSize(String value, Size size, Collection<Violation> collection, String fieldName) {
-        if(value == null || value.length() > size.max() || value.length() < size.min()) {
+    public void testSize(Object value, Size size, Collection<Violation> collection, String fieldName) {
+        int realValue = 0;
+        if(value.getClass() == String.class) {
+            realValue = ((String) value).length();
+        }
+        if(value.getClass() == Integer.class) {
+            realValue = (Integer) value;
+        }
+        int min = 1;
+        if(size.min() > 0) {
+            min = size.min();
+        }
+        if(value == null || realValue > size.max() || realValue < min) {
             Collection<String> messages = new ArrayList<>();
             messages.add(size.message());
             Violation violation = new Violation();
@@ -81,7 +92,7 @@ public class DefaultValidator implements Validator{
             , Field field, Object value) {
         if(annotation.annotationType() == NotNull.class) {
             NotNull notNull = field.getAnnotation(NotNull.class);
-            testNull((String) value, notNull, violations, field.getName());
+            testNull(value, notNull, violations, field.getName());
         }
         if(annotation.annotationType() == Regrex.class) {
             Regrex regrex = field.getAnnotation(Regrex.class);
@@ -89,7 +100,7 @@ public class DefaultValidator implements Validator{
         }
         if(annotation.annotationType() == Size.class) {
             Size size = field.getAnnotation(Size.class);
-            testSize((String) value, size, violations, field.getName());
+            testSize(value, size, violations, field.getName());
         }
     }
 
@@ -104,10 +115,11 @@ public class DefaultValidator implements Validator{
         if(data == null) {
             throw  new IllegalArgumentException();
         }
+        Collection<Violation> violationCollection = new ArrayList<>();
         Field fieldList[] = data.getClass().getDeclaredFields();
         try {
-            Collection<Violation> violationCollection = new ArrayList<>();
             for (Field field : fieldList) {
+                field.setAccessible(true);
                 Object value = field.get(data);
                 Annotation [] annotationFieldList = field.getAnnotations();
                 for(int count = 0; count < annotationFieldList.length; count++) {
@@ -121,6 +133,6 @@ public class DefaultValidator implements Validator{
             Logger logger = Logger.getLogger("Logger");
             logger.log(new LogRecord(Level.SEVERE, e.getMessage()));
         }
-        return null;
+        return violationCollection;
     }
 }

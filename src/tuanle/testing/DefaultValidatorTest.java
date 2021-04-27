@@ -1,101 +1,144 @@
 package tuanle.testing;
 
 
-import org.junit.Assert;
 import org.junit.Test;
-import tuanle.DefaultValidator;
-import tuanle.model.Staff;
+import tuanle.*;
+
+import java.util.Iterator;
 
 /**
- * Validator tester
+ * Required Knowledge
+ * - Java basic (conditional statement, loop, ...)
+ * - Java Annotation
+ * - Java Reflection API
+ * - OOP principles (Object-Oriented Programming Principles)
+ * <p>
+ * Requirements
+ * - Make sure your code stay consistent
+ * - Easily to maintain and highly extensible is a plus
+ * - Well documented code
+ * - Could handle a new rule with minimal code-change effort
  */
 public class DefaultValidatorTest {
-    /**
-     * When object for test is null
-     */
     @Test(expected = IllegalArgumentException.class)
-    public void whenObject_isNull() {
-        Staff staff = null;
-        DefaultValidator validator = new DefaultValidator();
-        validator.validate(staff);
+    public void whenValidate_NullValidatedObject_ThenReject() {
+        new DefaultValidator().validate(null);
     }
 
-    /**
-     * When first name of staff is null and last name is size violation
-     */
-    @Test
-    public void when_firstName_isNull_andLastname_isSizeViolation() {
-        Staff staff = new TestUtils().createStaff(null, "SDFD");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * When both first name and last name is null
-     */
-    @Test
-    public void when_firstName_isNull_andLastname_isNull() {
-        Staff staff = new TestUtils().createStaff(null, null);
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * When both first name and last name is size violation
-     */
-    @Test
-    public void when_firstName_isSizeViolation_andLastname_isSizeViolation() {
-        Staff staff = new TestUtils().createStaff("ABCD", "1234");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * Test when both first name and last name is empty
-     */
-    @Test
-    public void when_firstName_isEmpty_andLastname_isEmpty() {
-        Staff staff = new TestUtils().createStaff("", "");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * Test when both first name and last name is violation of regrex
+    /*
      *
-     * */
+     * Testing validator with model having only one rule for each fields
+     *
+     */
+
     @Test
-    public void when_Both_firstName_AndLastName_isRegrexViolation() {
-        Staff staff = new TestUtils().createStaff("12Fd", "32Fg3s");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
+    public void whenValidate_FieldHavingSingleRule_ThenReturnViolation() {
+        final Validator validator = new DefaultValidator();
+        final SingleRuleClient client = new SingleRuleClient();
+        client.setFirstName(null);
+        client.setLastName("more-than-5-characters");
+        client.setAge(15);
+
+        final Iterator<Violation> violations = validator.validate(client).iterator();
+
+        ViolationsAssertion.create()
+                .expectField("firstName")
+                .withMessage("First name must not be null")
+                .withInvalidValue(client.getFirstName())
+                .and().expectField("lastName")
+                .withMessage("Last name length must be within 1 and 5 characters")
+                .withInvalidValue(client.getLastName())
+                .and().expectField("age")
+                .withMessage("Age must be within 18 and 80 years old")
+                .withInvalidValue(client.getAge())
+                .and().assertViolations(violations);
+    }
+
+    public static class SingleRuleClient {
+        @NotNull(message = "First name must not be null")
+        private String firstName;
+
+        @Size(max = 5, message = "Last name length must be within 1 and 5 characters")
+        private String lastName;
+
+        @Size(min = 18, max = 80, message = "Age must be within 18 and 80 years old")
+        private Integer age;
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public Integer getAge() {
+            return age;
+        }
+
+        public void setAge(Integer age) {
+            this.age = age;
         }
     }
 
+    /*
+     *
+     * Testing validator with model having multiple rules for each fields
+     *
+     */
 
+    @Test
+    public void whenValidate_FieldHavingMultipleRules_ThenReturnViolation() {
+        final Validator validator = new DefaultValidator();
+        final MultipleRuleClient client = new MultipleRuleClient();
+        client.setFirstName("random123456");
+        client.setLastName("654321random");
 
+        final Iterator<Violation> violations = validator.validate(client).iterator();
+
+        ViolationsAssertion.create()
+                .expectField("firstName")
+                .withMessage("First name length must be within 2 and 5 characters")
+                .withMessage("Digit characters is only allowed")
+                .withInvalidValue(client.getFirstName())
+                .and().expectField("lastName")
+                .withMessage("Last name length must be within 1 and 5 characters")
+                .withMessage("Alphabet characters is only allowed")
+                .withInvalidValue(client.getLastName())
+                .and().assertViolations(violations);
+    }
+
+    public static class MultipleRuleClient {
+        @Size(min = 2, max = 5, message = "First name length must be within 2 and 5 characters")
+        @Regrex(pattern = "\\d*", message = "Digit characters is only allowed")
+        private String firstName;
+
+        @Size(max = 5, message = "Last name length must be within 1 and 5 characters")
+        @Regrex(pattern = "[a-zA-Z]*", message = "Alphabet characters is only allowed")
+        private String lastName;
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+    }
 }
