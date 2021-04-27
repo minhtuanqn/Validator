@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -12,6 +13,17 @@ import java.util.logging.Logger;
  * TODO Your implementation goes here
  */
 public class DefaultValidator implements Validator{
+
+    public Violation checkExistViolation(Collection<Violation> collection, String fieldName) {
+        Iterator itr = collection.iterator();
+        while (itr.hasNext()) {
+            Violation violation = (Violation) itr.next();
+            if(fieldName.equals(violation.getFieldName())) {
+                return violation;
+            }
+        }
+        return null;
+    }
 
     /**
      * Test null violation
@@ -22,13 +34,19 @@ public class DefaultValidator implements Validator{
      */
     public void testNull(Object value, NotNull notNull, Collection<Violation> collection, String fieldName) {
         if(value == null) {
-            Collection<String> messages = new ArrayList<>();
-            messages.add(notNull.message());
-            Violation violation = new Violation();
-            violation.setMessages(messages);
-            violation.setInvalidValue(value);
-            violation.setFieldName(fieldName);
-            collection.add(violation);
+            Violation existViolation = checkExistViolation(collection, fieldName);
+            if(existViolation == null) {
+                Collection<String> messages = new ArrayList<>();
+                messages.add(notNull.message());
+                Violation violation = new Violation();
+                violation.setMessages(messages);
+                violation.setInvalidValue(value);
+                violation.setFieldName(fieldName);
+                collection.add(violation);
+            }
+            else {
+                existViolation.getMessages().add(notNull.message());
+            }
         }
     }
 
@@ -41,13 +59,19 @@ public class DefaultValidator implements Validator{
      */
     public void testRegex(String value, Regrex regrex, Collection<Violation> collection, String fieldName) {
         if (value == null || !value.matches(regrex.pattern())) {
-            Collection<String> messages = new ArrayList<>();
-            messages.add(regrex.message());
-            Violation violation = new Violation();
-            violation.setMessages(messages);
-            violation.setFieldName(fieldName);
-            violation.setInvalidValue(value);
-            collection.add(violation);
+            Violation existViolation = checkExistViolation(collection, fieldName);
+            if(existViolation == null) {
+                Collection<String> messages = new ArrayList<>();
+                messages.add(regrex.message());
+                Violation violation = new Violation();
+                violation.setMessages(messages);
+                violation.setInvalidValue(value);
+                violation.setFieldName(fieldName);
+                collection.add(violation);
+            }
+            else {
+                existViolation.getMessages().add(regrex.message());
+            }
         }
     }
 
@@ -71,13 +95,19 @@ public class DefaultValidator implements Validator{
             min = size.min();
         }
         if(value == null || realValue > size.max() || realValue < min) {
-            Collection<String> messages = new ArrayList<>();
-            messages.add(size.message());
-            Violation violation = new Violation();
-            violation.setMessages(messages);
-            violation.setFieldName(fieldName);
-            violation.setInvalidValue(value);
-            collection.add(violation);
+            Violation existViolation = checkExistViolation(collection, fieldName);
+            if(existViolation == null) {
+                Collection<String> messages = new ArrayList<>();
+                messages.add(size.message());
+                Violation violation = new Violation();
+                violation.setMessages(messages);
+                violation.setInvalidValue(value);
+                violation.setFieldName(fieldName);
+                collection.add(violation);
+            }
+            else {
+                existViolation.getMessages().add(size.message());
+            }
         }
     }
 
