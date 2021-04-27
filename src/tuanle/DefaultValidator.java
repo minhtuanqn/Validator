@@ -94,26 +94,6 @@ public class DefaultValidator implements Validator{
     }
 
     /**
-     * Find all violation depend on type of annotation
-     * @param fieldList
-     * @param data
-     * @return
-     * @throws IllegalAccessException
-     */
-    public Collection<Violation> findAllViolation(Field [] fieldList, Object data) throws IllegalAccessException {
-        Collection<Violation> violationCollection = new ArrayList<>();
-        for (Field field : fieldList) {
-            Object value = field.get(data);
-            Annotation [] annotationFieldList = field.getAnnotations();
-            for(int count = 0; count < annotationFieldList.length; count++) {
-                Annotation annotation = annotationFieldList[count];
-                mapMethodTest(annotation, violationCollection, field, value);
-            }
-        }
-        return violationCollection;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @param data Input data
@@ -126,7 +106,15 @@ public class DefaultValidator implements Validator{
         }
         Field fieldList[] = data.getClass().getDeclaredFields();
         try {
-            Collection<Violation> violationCollection = findAllViolation(fieldList, data);
+            Collection<Violation> violationCollection = new ArrayList<>();
+            for (Field field : fieldList) {
+                Object value = field.get(data);
+                Annotation [] annotationFieldList = field.getAnnotations();
+                for(int count = 0; count < annotationFieldList.length; count++) {
+                    Annotation annotation = annotationFieldList[count];
+                    mapMethodTest(annotation, violationCollection, field, value);
+                }
+            }
             return violationCollection;
         }
         catch (IllegalAccessException e) {
