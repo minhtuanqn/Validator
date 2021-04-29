@@ -1,10 +1,9 @@
-package tuanle.testing;
+package validator;
 
 
+import model.Staff;
 import org.junit.Assert;
 import org.junit.Test;
-import tuanle.DefaultValidator;
-import tuanle.model.Staff;
 
 /**
  * Validator tester

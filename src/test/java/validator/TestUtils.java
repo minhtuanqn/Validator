@@ -1,8 +1,10 @@
-package tuanle.testing;
+package validator;
 
-import tuanle.*;
-import tuanle.model.Staff;
-
+import annotation.NotNull;
+import annotation.Regrex;
+import annotation.Size;
+import model.Staff;
+import model.Violation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;

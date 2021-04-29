@@ -1,4 +1,6 @@
-package tuanle;
+package validator;
+
+import model.Violation;
 
 import java.util.Collection;
 

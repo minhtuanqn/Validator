@@ -1,8 +1,9 @@
-package tuanle.model;
+package model;
 
-import tuanle.NotNull;
-import tuanle.Regrex;
-import tuanle.Size;
+
+import annotation.NotNull;
+import annotation.Regrex;
+import annotation.Size;
 
 /**
  * Studen model

@@ -1,4 +1,4 @@
-package tuanle;
+package annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,22 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Regex rule
+ * Check null rule
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Regrex {
+public @interface NotNull {
     /**
      * Violation message
      *
      * @return Message
      */
     String message();
-
-    /**
-     * Regular expression
-     *
-     * @return Expression
-     */
-    String pattern();
 }

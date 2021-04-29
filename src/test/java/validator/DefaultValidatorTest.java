@@ -1,8 +1,11 @@
-package tuanle.testing;
+package validator;
 
 
+import annotation.NotNull;
+import annotation.Regrex;
+import annotation.Size;
+import model.Violation;
 import org.junit.Test;
-import tuanle.*;
 
 import java.util.Iterator;
 

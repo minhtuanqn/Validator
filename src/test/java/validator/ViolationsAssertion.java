@@ -1,6 +1,6 @@
-package tuanle.testing;
+package validator;
 
-import tuanle.Violation;
+import model.Violation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

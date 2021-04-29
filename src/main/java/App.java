@@ -1,6 +1,7 @@
-package tuanle;
-
-import tuanle.model.Student;
+import model.Student;
+import model.Violation;
+import validator.DefaultValidator;
+import validator.Validator;
 
 import java.util.Collection;
 import java.util.Iterator;
