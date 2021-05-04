@@ -1,0 +1,30 @@
+01:56:18,313 [ERROR] - Error: Cannot access private field firstName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:56:18,313 [ERROR] - Error: Cannot access private field lastName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:56:18,313 [ERROR] - Error: Cannot access private field age of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:56:47,055 [ERROR] - Error: Cannot access private field firstName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:56:47,055 [ERROR] - Error: Cannot access private field lastName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:56:47,055 [ERROR] - Error: Cannot access private field age of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:59:10,018 [ERROR] - Error: Cannot access private field firstName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:59:10,019 [ERROR] - Error: Cannot access private field lastName of class validator.DefaultValidatorTest.SingleRuleClient
+
+01:59:10,019 [ERROR] - Error: Cannot access private field age of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:00:09,603 [ERROR] - Error: Cannot access private field firstName of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:00:09,604 [ERROR] - Error: Cannot access private field lastName of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:00:09,604 [ERROR] - Error: Cannot access private field age of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:07:12,490 [ERROR] - Error: Cannot access private field firstName of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:07:12,491 [ERROR] - Error: Cannot access private field lastName of class validator.DefaultValidatorTest.SingleRuleClient
+
+02:07:12,491 [ERROR] - Error: Cannot access private field age of class validator.DefaultValidatorTest.SingleRuleClient
+

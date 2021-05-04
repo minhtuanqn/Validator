@@ -6,33 +6,16 @@ import model.Violation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-public class NotNullValidation {
-
-    /**
-     * Check exist violation of field
-     * @param collection
-     * @param fieldName
-     * @return
-     */
-    public Violation checkExistViolation(Collection<Violation> collection, String fieldName) {
-        Iterator itr = collection.iterator();
-        while (itr.hasNext()) {
-            Violation violation = (Violation) itr.next();
-            if(fieldName.equals(violation.getFieldName())) {
-                return violation;
-            }
-        }
-        return null;
-    }
+public class NotNullValidation extends ValidationUtils implements ValidationRule{
 
     /**
      * Test null violation
      * @param value
      * @param collection
      */
-    public void testNotNull(Object value, Collection<Violation> collection, Field field) {
+    @Override
+    public void test(Object value, Collection<Violation> collection, Field field) {
         NotNull notNull = field.getAnnotation(NotNull.class);
         if(value == null) {
             Violation existViolation = checkExistViolation(collection, field.getName());

@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  * Validator tester
  */
-public class UpdatedTest {
+public class SizeValidationTest {
     /**
      * When object for test is null
      */

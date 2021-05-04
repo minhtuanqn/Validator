@@ -1,27 +1,26 @@
 package validator;
 
-import annotation.NotNull;
-import annotation.Regrex;
-import annotation.Size;
-import annotation.validation.NotNullValidation;
-import annotation.validation.RegrexValidation;
-import annotation.validation.SizeValidation;
 import annotation.validation.ValidationTypeDispatcher;
 import model.Violation;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.text.MessageFormat;
+
 
 /**
  * TODO Your implementation goes here
  */
 public class DefaultValidator implements Validator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultValidator.class);
 
     /**
      * {@inheritDoc}
@@ -31,27 +30,30 @@ public class DefaultValidator implements Validator {
      */
     @Override
     public Collection<Violation> validate(Object data) {
-        if(data == null) {
-            throw  new IllegalArgumentException();
+        if (data == null) {
+            throw new IllegalArgumentException();
         }
         Collection<Violation> violationCollection = new ArrayList<>();
-        Field fieldList[] = data.getClass().getDeclaredFields();
-        try {
-            for (Field field : fieldList) {
-                field.setAccessible(true);
+        Field[] fieldList = data.getClass().getDeclaredFields();
+
+        for (Field field : fieldList) {
+            try {
+//                field.setAccessible(true);
                 Object value = field.get(data);
-                Annotation [] annotationFieldList = field.getAnnotations();
-                for(int count = 0; count < annotationFieldList.length; count++) {
+                Annotation[] annotationFieldList = field.getAnnotations();
+                for (int count = 0; count < annotationFieldList.length; count++) {
                     Annotation annotation = annotationFieldList[count];
                     ValidationTypeDispatcher dispatcher = new ValidationTypeDispatcher();
                     dispatcher.mapMethodTest(annotation, violationCollection, field, value);
                 }
+//                field.setAccessible(false);
             }
-            return violationCollection;
-        }
-        catch (IllegalAccessException e) {
-            Logger logger = Logger.getLogger("Logger");
-            logger.log(new LogRecord(Level.SEVERE, e.getMessage()));
+            catch (IllegalAccessException e) {
+                field.setAccessible(false);
+                String message = MessageFormat.format("Error: Cannot access private field {0} of class {1}\n",
+                        field.getName(), data.getClass().getCanonicalName());
+                LOGGER.error(message, e.getMessage());
+            }
         }
         return violationCollection;
     }
