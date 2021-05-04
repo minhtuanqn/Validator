@@ -2,9 +2,6 @@ package validator;
 
 import annotation.validation.ValidationTypeDispatcher;
 import model.Violation;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +35,7 @@ public class DefaultValidator implements Validator {
 
         for (Field field : fieldList) {
             try {
-//                field.setAccessible(true);
+                field.setAccessible(true);
                 Object value = field.get(data);
                 Annotation[] annotationFieldList = field.getAnnotations();
                 for (int count = 0; count < annotationFieldList.length; count++) {
@@ -46,7 +43,7 @@ public class DefaultValidator implements Validator {
                     ValidationTypeDispatcher dispatcher = new ValidationTypeDispatcher();
                     dispatcher.mapMethodTest(annotation, violationCollection, field, value);
                 }
-//                field.setAccessible(false);
+                field.setAccessible(false);
             }
             catch (IllegalAccessException e) {
                 field.setAccessible(false);
