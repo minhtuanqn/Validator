@@ -116,8 +116,9 @@ public class TestUtils {
         Collection<Violation> violationList = new ArrayList<>();
         try {
             Violation nullFirstNameViolation = testNullStaffViolation("firstName", staff.getFirstName());
-            Violation regexLastnameViolation = testRegrexStaffViolation("lastName", staff.getLastName());
             Violation sizeLastNameViolation = testSizeStaffViolation("lastName", staff.getLastName());
+            Violation regexLastnameViolation = testRegrexStaffViolation("lastName", staff.getLastName());
+
             if(nullFirstNameViolation != null) {
                 violationList.add(nullFirstNameViolation);
             }
@@ -127,7 +128,6 @@ public class TestUtils {
             if(regexLastnameViolation != null) {
                 violationList.add(regexLastnameViolation);
             }
-
 
             return violationList;
         }

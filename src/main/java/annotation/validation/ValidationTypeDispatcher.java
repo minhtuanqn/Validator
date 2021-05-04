@@ -53,21 +53,5 @@ public class ValidationTypeDispatcher {
 
         }
 
-
-//        if(annotation.annotationType() == NotNull.class) {
-//            NotNull notNull = field.getAnnotation(NotNull.class);
-//            NotNullValidation notNullValidation = new NotNullValidation();
-//            notNullValidation.testNull(value, notNull, violations, field.getName());
-//        }
-//        if(annotation.annotationType() == Regrex.class) {
-//            Regrex regrex = field.getAnnotation(Regrex.class);
-//            RegrexValidation regrexValidation = new RegrexValidation();
-//            regrexValidation.testRegex((String) value, regrex, violations, field.getName());
-//        }
-//        if(annotation.annotationType() == Size.class) {
-//            Size size = field.getAnnotation(Size.class);
-//            SizeValidation sizeValidation = new SizeValidation();
-//            sizeValidation.testSize(value, size, violations, field.getName());
-//        }
     }
 }
