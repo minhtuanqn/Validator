@@ -50,8 +50,6 @@ public class ValidationTypeDispatcher {
                 Logger logger = Logger.getLogger("MethodEx");
                 logger.log(new LogRecord(Level.SEVERE, e.getMessage()));
             }
-
         }
-
     }
 }
