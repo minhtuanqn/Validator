@@ -3,6 +3,7 @@ package annotation.validation;
 import annotation.NotNull;
 import model.Violation;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,20 +30,20 @@ public class NotNullValidation {
     /**
      * Test null violation
      * @param value
-     * @param notNull
      * @param collection
-     * @param fieldName
      */
-    public void testNull(Object value, NotNull notNull, Collection<Violation> collection, String fieldName) {
+    public void testNotNull(Object value, Collection<Violation> collection, Field field) {
+        NotNull notNull = field.getAnnotation(NotNull.class);
         if(value == null) {
-            Violation existViolation = checkExistViolation(collection, fieldName);
+            Violation existViolation = checkExistViolation(collection, field.getName());
             if(existViolation == null) {
+
                 Collection<String> messages = new ArrayList<>();
                 messages.add(notNull.message());
                 Violation violation = new Violation();
                 violation.setMessages(messages);
                 violation.setInvalidValue(value);
-                violation.setFieldName(fieldName);
+                violation.setFieldName(field.getName());
                 collection.add(violation);
             }
             else {
