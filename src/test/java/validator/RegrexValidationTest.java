@@ -3,9 +3,7 @@ package validator;
 import annotation.NotNull;
 import annotation.Regrex;
 import annotation.Size;
-import annotation.validation.NotNullValidation;
 import annotation.validation.RegrexValidation;
-import annotation.validation.SizeValidation;
 import model.Violation;
 import org.junit.Test;
 
