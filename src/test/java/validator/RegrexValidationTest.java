@@ -5,6 +5,7 @@ import annotation.Regrex;
 import annotation.Size;
 import annotation.validation.NotNullValidation;
 import annotation.validation.RegrexValidation;
+import annotation.validation.SizeValidation;
 import model.Violation;
 import org.junit.Test;
 
@@ -27,6 +28,18 @@ public class RegrexValidationTest {
                 .and().expectField("phone")
                 .withMessage("Phone number is just used digits").withInvalidValue(student.getPhone())
                 .and().assertViolations(iterator);
+    }
+
+    @Test
+    public void whenValidate_NoFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
+        Collection<Violation> violations = new ArrayList<>();
+        final Student student = new Student("sesd", "tuan", "123456789012");
+        final RegrexValidation regrexValidation = new RegrexValidation();
+        regrexValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
+        regrexValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+
+        Iterator<Violation> iterator = violations.iterator();
+        ViolationsAssertion.create().assertViolations(iterator);
     }
 
 
