@@ -1,97 +1,114 @@
 package validator;
 
 
-import model.Staff;
-import org.junit.Assert;
+import annotation.NotNull;
+import annotation.Regrex;
+import annotation.Size;
+import annotation.validation.SizeValidation;
+import model.Violation;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
- * Validator tester
+ * Size Validator
  */
 public class SizeValidationTest {
-    /**
-     * When object for test is null
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void whenObject_isNull() {
-        Staff staff = null;
-        DefaultValidator validator = new DefaultValidator();
-        validator.validate(staff);
+
+    @Test
+    public void whenValidate_AllFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
+        Collection<Violation> violations = new ArrayList<>();
+        final Student student = new Student("se", "leminhtuan", "1234567890123g");
+        final SizeValidation sizeValidation = new SizeValidation();
+        sizeValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
+        sizeValidation.test(student.getName(), violations, Student.class.getDeclaredField("name"));
+        sizeValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+
+        Iterator<Violation> iterator = violations.iterator();
+        ViolationsAssertion.create().expectField("id")
+                .withMessage("Id must from 3-5").withInvalidValue(student.getId())
+                .and().expectField("name")
+                .withMessage("Max of name is 8 characters").withInvalidValue(student.getName())
+                .and().expectField("phone")
+                .withMessage("Max of phone is 13 characters").withInvalidValue(student.getPhone())
+                .and().assertViolations(iterator);
     }
 
-    /**
-     * When first name of staff is null and last name is size violation
-     */
     @Test
-    public void when_firstName_isNull_andLastname_isSizeViolation() {
-        Staff staff = new TestUtils().createStaff(null, "SDFD");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
+    public void whenValidate_OneFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
+        Collection<Violation> violations = new ArrayList<>();
+        final Student student = new Student("sesd", "leminhtuan", "123456789012");
+        final SizeValidation sizeValidation = new SizeValidation();
+        sizeValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
+        sizeValidation.test(student.getName(), violations, Student.class.getDeclaredField("name"));
+        sizeValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+
+        Iterator<Violation> iterator = violations.iterator();
+        ViolationsAssertion.create().expectField("name")
+                .withMessage("Max of name is 8 characters").withInvalidValue(student.getName())
+                .and().assertViolations(iterator);
+    }
+
+    @Test
+    public void whenValidate_NoFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
+        Collection<Violation> violations = new ArrayList<>();
+        final Student student = new Student("sesd", "tuan", "123456789012");
+        final SizeValidation sizeValidation = new SizeValidation();
+        sizeValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
+        sizeValidation.test(student.getName(), violations, Student.class.getDeclaredField("name"));
+        sizeValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+
+        Iterator<Violation> iterator = violations.iterator();
+        ViolationsAssertion.create().assertViolations(iterator);
+    }
+
+
+
+    public static class Student {
+        @NotNull(message = "ID can not be null")
+        @Size(min = 3, max = 5,message = "Id must from 3-5")
+        public String id;
+
+        @Size(max = 8,message = "Max of name is 8 characters")
+        public String name;
+
+        @Size(max = 13, message = "Max of phone is 13 characters")
+        @Regrex(pattern = "[0-9]{1,}", message = "Phone number is just used digits")
+        public String phone;
+
+        public Student() {}
+
+        public Student(String id, String name, String phone) {
+            this.id = id;
+            this.name = name;
+            this.phone= phone;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
         }
     }
 
-    /**
-     * When both first name and last name is null
-     */
-    @Test
-    public void when_firstName_isNull_andLastname_isNull() {
-        Staff staff = new TestUtils().createStaff(null, null);
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * When both first name and last name is size violation
-     */
-    @Test
-    public void when_firstName_isSizeViolation_andLastname_isSizeViolation() {
-        Staff staff = new TestUtils().createStaff("ABCD", "1234");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * Test when both first name and last name is empty
-     */
-    @Test
-    public void when_firstName_isEmpty_andLastname_isEmpty() {
-        Staff staff = new TestUtils().createStaff("", "");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
-
-    /**
-     * Test when both first name and last name is violation of regrex
-     *
-     * */
-    @Test
-    public void when_Both_firstName_AndLastName_isRegrexViolation() {
-        Staff staff = new TestUtils().createStaff("12Fd", "32Fg3s");
-        DefaultValidator validator = new DefaultValidator();
-        Object actualList[] = validator.validate(staff).toArray();
-        Object expectedList[] = TestUtils.createCollectionOfViolation(staff).toArray();
-        Assert.assertEquals(actualList.length, expectedList.length);
-        for(int count = 0; count < expectedList.length; count ++) {
-            Assert.assertEquals(actualList[count].toString(), expectedList[count].toString());
-        }
-    }
 }
