@@ -6,19 +6,24 @@ import annotation.Size;
 import annotation.validation.RegrexValidation;
 import model.Violation;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class RegrexValidationTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultValidator.class);
+
     @Test
     public void whenValidate_TwoFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
         Collection<Violation> violations = new ArrayList<>();
         final Student student = new Student("45fgfg",null, "098776577gddf");
         final RegrexValidation regrexValidation = new RegrexValidation();
-        regrexValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
-        regrexValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+        regrexValidation.test(getIdRegrexAnnotation(), student.getId(), violations, Student.class.getDeclaredField("id"));
+        regrexValidation.test(getPhoneRegrexAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
         ViolationsAssertion.create().expectField("id")
@@ -33,8 +38,8 @@ public class RegrexValidationTest {
         Collection<Violation> violations = new ArrayList<>();
         final Student student = new Student("sesd", "tuan", "123456789012");
         final RegrexValidation regrexValidation = new RegrexValidation();
-        regrexValidation.test(student.getId(), violations, Student.class.getDeclaredField("id"));
-        regrexValidation.test(student.getPhone(), violations, Student.class.getDeclaredField("phone"));
+        regrexValidation.test(getIdRegrexAnnotation(), student.getId(), violations, Student.class.getDeclaredField("id"));
+        regrexValidation.test(getPhoneRegrexAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
         ViolationsAssertion.create().assertViolations(iterator);
@@ -88,4 +93,44 @@ public class RegrexValidationTest {
             this.phone = phone;
         }
     }
+
+    public Regrex getIdRegrexAnnotation() {
+        try {
+            Regrex idRegrex = Student.class.getDeclaredField("id").getDeclaredAnnotation(Regrex.class);
+            return idRegrex;
+        }
+        catch (NoSuchFieldException e) {
+            String message = "Error: Cannot find field element by name\n";
+            LOGGER.error(message, e.getStackTrace());
+        }
+        return null;
+    }
+
+    public Regrex getNameRegrexAnnotation() {
+        try {
+            Regrex nameRegrex = Student.class.getDeclaredField("name").getDeclaredAnnotation(Regrex.class);
+            return nameRegrex;
+        }
+        catch (NoSuchFieldException e) {
+            String message = "Error: Cannot find field element by name\n";
+            LOGGER.error(message, e.getStackTrace());
+        }
+        return null;
+    }
+
+
+
+    public Regrex getPhoneRegrexAnnotation() {
+        try {
+            Regrex phoneRegrex = Student.class.getDeclaredField("phone").
+                    getDeclaredAnnotation(Regrex.class);
+            return phoneRegrex;
+        }
+        catch (NoSuchFieldException e) {
+            String message = "Error: Cannot find field element by name\n";
+            LOGGER.error(message, e.getStackTrace());
+        }
+        return null;
+    }
+
 }

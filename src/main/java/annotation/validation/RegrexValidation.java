@@ -3,11 +3,12 @@ package annotation.validation;
 import annotation.Regrex;
 import model.Violation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class RegrexValidation extends ValidationUtils implements ValidationRule{
+public class RegrexValidation extends ValidationSupporter implements ValidationRule{
 
     /**
      * Test regrex violation
@@ -15,17 +16,14 @@ public class RegrexValidation extends ValidationUtils implements ValidationRule{
      * @param collection
      */
     @Override
-    public void test(Object value, Collection<Violation> collection, Field field) {
-        Regrex regrex = field.getAnnotation(Regrex.class);
+    public void test(Annotation annotation, Object value, Collection<Violation> collection, Field field) {
+        Regrex regrex = (Regrex) annotation;
         if (value == null || !((String) value).matches(regrex.pattern())) {
             Violation existViolation = checkExistViolation(collection, field.getName());
             if(existViolation == null) {
                 Collection<String> messages = new ArrayList<>();
                 messages.add(regrex.message());
-                Violation violation = new Violation();
-                violation.setMessages(messages);
-                violation.setInvalidValue(value);
-                violation.setFieldName(field.getName());
+                Violation violation = new Violation(value, messages, field.getName());
                 collection.add(violation);
             }
             else {

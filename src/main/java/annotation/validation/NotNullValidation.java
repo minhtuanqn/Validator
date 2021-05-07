@@ -3,11 +3,12 @@ package annotation.validation;
 import annotation.NotNull;
 import model.Violation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class NotNullValidation extends ValidationUtils implements ValidationRule{
+public class NotNullValidation extends ValidationSupporter implements ValidationRule{
 
     /**
      * Test null violation
@@ -15,18 +16,15 @@ public class NotNullValidation extends ValidationUtils implements ValidationRule
      * @param collection
      */
     @Override
-    public void test(Object value, Collection<Violation> collection, Field field) {
-        NotNull notNull = field.getAnnotation(NotNull.class);
+    public void test(Annotation annotation, Object value, Collection<Violation> collection, Field field) {
+        NotNull notNull = (NotNull) annotation;
         if(value == null) {
             Violation existViolation = checkExistViolation(collection, field.getName());
             if(existViolation == null) {
 
                 Collection<String> messages = new ArrayList<>();
                 messages.add(notNull.message());
-                Violation violation = new Violation();
-                violation.setMessages(messages);
-                violation.setInvalidValue(value);
-                violation.setFieldName(field.getName());
+                Violation violation = new Violation(value, messages, field.getName());
                 collection.add(violation);
             }
             else {

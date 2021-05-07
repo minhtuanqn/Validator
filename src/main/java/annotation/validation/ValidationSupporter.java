@@ -5,7 +5,7 @@ import model.Violation;
 import java.util.Collection;
 import java.util.Iterator;
 
-abstract class ValidationUtils {
+abstract class ValidationSupporter {
 
     /**
      * Check exist violation of field
@@ -23,4 +23,5 @@ abstract class ValidationUtils {
         }
         return null;
     }
+
 }

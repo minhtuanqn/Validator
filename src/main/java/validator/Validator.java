@@ -2,6 +2,7 @@ package validator;
 
 import model.Violation;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
@@ -15,4 +16,6 @@ public interface Validator {
      * @return Collection of violation instances
      */
     Collection<Violation> validate(Object data);
+
+    void addRuleForField(String fieldName, Annotation annotation);
 }

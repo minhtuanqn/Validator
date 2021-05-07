@@ -3,11 +3,12 @@ package annotation.validation;
 import annotation.Size;
 import model.Violation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SizeValidation extends ValidationUtils implements ValidationRule{
+public class SizeValidation extends ValidationSupporter implements ValidationRule{
 
     /**
      * Test size violation
@@ -15,28 +16,28 @@ public class SizeValidation extends ValidationUtils implements ValidationRule{
      * @param collection
      */
     @Override
-    public void test(Object value, Collection<Violation> collection, Field field) {
-        Size size = field.getAnnotation(Size.class);
+    public void test(Annotation annotation, Object value, Collection<Violation> collection, Field field) {
+        Size size = (Size) annotation;
         int realValue = 0;
-        if(value.getClass() == String.class) {
+        if(value == null) {
+
+        }
+        else if(value.getClass() == String.class) {
             realValue = ((String) value).length();
         }
-        if(value.getClass() == Integer.class) {
+        else if(value.getClass() == Integer.class) {
             realValue = (Integer) value;
         }
         int min = 1;
         if(size.min() > 0) {
             min = size.min();
         }
-        if(value == null || realValue > size.max() || realValue < min) {
+        if(realValue > size.max() || realValue < min) {
             Violation existViolation = checkExistViolation(collection, field.getName());
             if(existViolation == null) {
                 Collection<String> messages = new ArrayList<>();
                 messages.add(size.message());
-                Violation violation = new Violation();
-                violation.setMessages(messages);
-                violation.setInvalidValue(value);
-                violation.setFieldName(field.getName());
+                Violation violation = new Violation(value, messages, field.getName());
                 collection.add(violation);
             }
             else {

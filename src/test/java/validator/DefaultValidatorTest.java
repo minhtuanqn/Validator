@@ -7,6 +7,8 @@ import annotation.Size;
 import model.Violation;
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Iterator;
 
 /**
@@ -144,4 +146,41 @@ public class DefaultValidatorTest {
             this.lastName = lastName;
         }
     }
+
+    @Test
+    public void whenValidate_FieldHavingMultipleRulesAndAddedSingleRule_ThenReturnViolation() {
+        final Validator validator = new DefaultValidator();
+        final MultipleRuleClient client = new MultipleRuleClient();
+        client.setFirstName("random123456");
+        client.setLastName(null);
+        NotNull notNull = new NotNull() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return NotNull.class;
+            }
+
+            @Override
+            public String message() {
+                return "Last name can not be null";
+            }
+        };
+        validator.addRuleForField("lastName", notNull);
+
+        final Iterator<Violation> violations = validator.validate(client).iterator();
+
+        ViolationsAssertion.create()
+                .expectField("firstName")
+                .withMessage("First name length must be within 2 and 5 characters")
+                .withMessage("Digit characters is only allowed")
+                .withInvalidValue(client.getFirstName())
+                .and().expectField("lastName")
+                .withMessage("Last name can not be null")
+                .withMessage("Last name length must be within 1 and 5 characters")
+                .withMessage("Alphabet characters is only allowed")
+                .withInvalidValue(client.getLastName())
+                .and().assertViolations(violations);
+    }
+
+
 }

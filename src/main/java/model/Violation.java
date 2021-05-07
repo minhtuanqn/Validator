@@ -11,6 +11,15 @@ public class Violation {
     private Collection<String> messages;
     private String fieldName;
 
+    public Violation() {
+    }
+
+    public Violation(Object invalidValue, Collection<String> messages, String fieldName) {
+        this.invalidValue = invalidValue;
+        this.messages = messages;
+        this.fieldName = fieldName;
+    }
+
     /**
      *
      * @return Invalid value

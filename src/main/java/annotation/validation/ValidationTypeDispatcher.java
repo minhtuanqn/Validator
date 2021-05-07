@@ -21,6 +21,7 @@ public class ValidationTypeDispatcher {
         return annotationMap;
     }
 
+
     /**
      * Map type of annotation and find method for test violation
      * @param annotation
@@ -33,7 +34,7 @@ public class ValidationTypeDispatcher {
         Map<Class<? extends Annotation>, ValidationRule> annotationMap = getMapAnnotation();
         if(annotationMap.containsKey(annotation.annotationType())) {
             ValidationRule validationObject = annotationMap.get(annotation.annotationType());
-            validationObject.test(value, violations, field);
+            validationObject.test(annotation, value, violations, field);
         }
     }
 }
