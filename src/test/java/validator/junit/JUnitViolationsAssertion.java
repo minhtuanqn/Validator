@@ -1,4 +1,4 @@
-package validator;
+package validator.junit;
 
 import model.Violation;
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ViolationsAssertion {
+public class JUnitViolationsAssertion {
     private final List<FieldAssertion> expectedFields = new ArrayList<>();
 
-    public static ViolationsAssertion create() {
-        return new ViolationsAssertion();
+    public static JUnitViolationsAssertion create() {
+        return new JUnitViolationsAssertion();
     }
 
     public FieldAssertion expectField(String fieldName) {
@@ -60,8 +60,8 @@ public class ViolationsAssertion {
             return this;
         }
 
-        public ViolationsAssertion and() {
-            return ViolationsAssertion.this;
+        public JUnitViolationsAssertion and() {
+            return JUnitViolationsAssertion.this;
         }
 
         public String getFieldName() {

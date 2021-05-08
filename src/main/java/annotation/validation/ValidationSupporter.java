@@ -15,13 +15,14 @@ abstract class ValidationSupporter {
      */
     Violation checkExistViolation(Collection<Violation> collection, String fieldName) {
         Iterator itr = collection.iterator();
-        while (itr.hasNext()) {
-            Violation violation = (Violation) itr.next();
-            if(fieldName.equals(violation.getFieldName())) {
-                return violation;
+        if(itr != null) {
+            while (itr.hasNext()) {
+                Violation violation = (Violation) itr.next();
+                if(fieldName.equals(violation.getFieldName())) {
+                    return violation;
+                }
             }
         }
         return null;
     }
-
 }

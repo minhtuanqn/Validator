@@ -1,4 +1,4 @@
-package validator;
+package validator.junit;
 
 
 import annotation.NotNull;
@@ -9,8 +9,8 @@ import model.Violation;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import validator.DefaultValidator;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,7 +18,7 @@ import java.util.Iterator;
 /**
  * Size Validator
  */
-public class SizeValidationTest {
+public class JUnitSizeValidationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultValidator.class);
 
@@ -32,7 +32,7 @@ public class SizeValidationTest {
         sizeValidation.test(getPhoneSizeAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
-        ViolationsAssertion.create().expectField("id")
+        JUnitViolationsAssertion.create().expectField("id")
                 .withMessage("Id must from 3-5").withInvalidValue(student.getId())
                 .and().expectField("name")
                 .withMessage("Max of name is 8 characters").withInvalidValue(student.getName())
@@ -51,7 +51,7 @@ public class SizeValidationTest {
         sizeValidation.test(getPhoneSizeAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
-        ViolationsAssertion.create().expectField("name")
+        JUnitViolationsAssertion.create().expectField("name")
                 .withMessage("Max of name is 8 characters").withInvalidValue(student.getName())
                 .and().assertViolations(iterator);
     }
@@ -66,7 +66,7 @@ public class SizeValidationTest {
         sizeValidation.test(getPhoneSizeAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
-        ViolationsAssertion.create().assertViolations(iterator);
+        JUnitViolationsAssertion.create().assertViolations(iterator);
     }
 
 
@@ -118,24 +118,22 @@ public class SizeValidationTest {
 
     public Size getIdSizeAnnotation() {
         try {
-            Size idSize = Student.class.getDeclaredField("id").getDeclaredAnnotation(Size.class);
-            return idSize;
+            return Student.class.getDeclaredField("id").getDeclaredAnnotation(Size.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }
 
     public Size getNameSizeAnnotation() {
         try {
-            Size nameSize = Student.class.getDeclaredField("name").getDeclaredAnnotation(Size.class);
-            return nameSize;
+            return Student.class.getDeclaredField("name").getDeclaredAnnotation(Size.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }
@@ -144,12 +142,11 @@ public class SizeValidationTest {
 
     public Size getPhoneSizeAnnotation() {
         try {
-            Size phoneSize = Student.class.getDeclaredField("phone").getDeclaredAnnotation(Size.class);
-            return phoneSize;
+            return Student.class.getDeclaredField("phone").getDeclaredAnnotation(Size.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }

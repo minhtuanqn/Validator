@@ -1,4 +1,4 @@
-package validator;
+package validator.junit;
 
 
 import annotation.NotNull;
@@ -6,9 +6,10 @@ import annotation.Regrex;
 import annotation.Size;
 import model.Violation;
 import org.junit.Test;
+import validator.DefaultValidator;
+import validator.Validator;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Iterator;
  * - Well documented code
  * - Could handle a new rule with minimal code-change effort
  */
-public class DefaultValidatorTest {
+public class JUnitDefaultValidatorTest {
     @Test(expected = IllegalArgumentException.class)
     public void whenValidate_NullValidatedObject_ThenReject() {
         new DefaultValidator().validate(null);
@@ -46,7 +47,7 @@ public class DefaultValidatorTest {
 
         final Iterator<Violation> violations = validator.validate(client).iterator();
 
-        ViolationsAssertion.create()
+        JUnitViolationsAssertion.create()
                 .expectField("firstName")
                 .withMessage("First name must not be null")
                 .withInvalidValue(client.getFirstName())
@@ -109,7 +110,7 @@ public class DefaultValidatorTest {
 
         final Iterator<Violation> violations = validator.validate(client).iterator();
 
-        ViolationsAssertion.create()
+        JUnitViolationsAssertion.create()
                 .expectField("firstName")
                 .withMessage("First name length must be within 2 and 5 characters")
                 .withMessage("Digit characters is only allowed")
@@ -169,7 +170,7 @@ public class DefaultValidatorTest {
 
         final Iterator<Violation> violations = validator.validate(client).iterator();
 
-        ViolationsAssertion.create()
+        JUnitViolationsAssertion.create()
                 .expectField("firstName")
                 .withMessage("First name length must be within 2 and 5 characters")
                 .withMessage("Digit characters is only allowed")

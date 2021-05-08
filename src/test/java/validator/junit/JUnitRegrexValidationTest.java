@@ -1,57 +1,56 @@
-package validator;
+package validator.junit;
 
 import annotation.NotNull;
 import annotation.Regrex;
 import annotation.Size;
-import annotation.validation.NotNullValidation;
+import annotation.validation.RegrexValidation;
 import model.Violation;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import validator.DefaultValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class NotNullValidationTest {
+public class JUnitRegrexValidationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultValidator.class);
 
     @Test
     public void whenValidate_TwoFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
         Collection<Violation> violations = new ArrayList<>();
-        final SizeValidationTest.Student student = new SizeValidationTest.Student();
-        final NotNullValidation notNullValidation = new NotNullValidation();
-        notNullValidation.test(getNameNotNullAnnotation(), student.getName(), violations,
-                NotNullValidationTest.Student.class.getDeclaredField("name"));
-        notNullValidation.test(getPhoneNotNullAnnotation(), student.getPhone(), violations,
-                NotNullValidationTest.Student.class.getDeclaredField("phone"));
+        final Student student = new Student("45fgfg",null, "098776577gddf");
+        final RegrexValidation regrexValidation = new RegrexValidation();
+        regrexValidation.test(getIdRegrexAnnotation(), student.getId(), violations, Student.class.getDeclaredField("id"));
+        regrexValidation.test(getPhoneRegrexAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
-        ViolationsAssertion.create().expectField("name")
-                .withMessage("Name can not be null").withInvalidValue(student.getName())
+        JUnitViolationsAssertion.create().expectField("id")
+                .withMessage("ID is just used characters").withInvalidValue(student.getId())
                 .and().expectField("phone")
-                .withMessage("Phone can not be null").withInvalidValue(student.getPhone())
+                .withMessage("Phone number is just used digits").withInvalidValue(student.getPhone())
                 .and().assertViolations(iterator);
     }
 
     @Test
     public void whenValidate_NoFieldIsViolation_ThenReturnViolation() throws NoSuchFieldException {
         Collection<Violation> violations = new ArrayList<>();
-        final SizeValidationTest.Student student = new SizeValidationTest.Student();
-        final NotNullValidation notNullValidation = new NotNullValidation();
-        notNullValidation.test(getNameNotNullAnnotation(), student.getName(), violations,
-                NotNullValidationTest.Student.class.getDeclaredField("name"));
-        notNullValidation.test(getPhoneNotNullAnnotation(), student.getPhone(), violations, NotNullValidationTest.Student.class.getDeclaredField("phone"));
+        final Student student = new Student("sesd", "tuan", "123456789012");
+        final RegrexValidation regrexValidation = new RegrexValidation();
+        regrexValidation.test(getIdRegrexAnnotation(), student.getId(), violations, Student.class.getDeclaredField("id"));
+        regrexValidation.test(getPhoneRegrexAnnotation(), student.getPhone(), violations, Student.class.getDeclaredField("phone"));
 
         Iterator<Violation> iterator = violations.iterator();
-        ViolationsAssertion.create().assertViolations(iterator);
+        JUnitViolationsAssertion.create().assertViolations(iterator);
     }
 
 
 
     public static class Student {
 
+        @Regrex(pattern = "[a-zA-Z]*", message = "ID is just used characters")
         public String id;
 
         @NotNull(message = "Name can not be null")
@@ -62,12 +61,13 @@ public class NotNullValidationTest {
         @Regrex(pattern = "[0-9]{1,}", message = "Phone number is just used digits")
         public String phone;
 
-        public Student() {}
+        public Student() {
+        }
 
         public Student(String id, String name, String phone) {
             this.id = id;
             this.name = name;
-            this.phone= phone;
+            this.phone = phone;
         }
 
         public String getId() {
@@ -95,41 +95,38 @@ public class NotNullValidationTest {
         }
     }
 
-    public NotNull getIdNotNullAnnotation() {
+    public Regrex getIdRegrexAnnotation() {
         try {
-            NotNull idNotNull = Student.class.getDeclaredField("id").getDeclaredAnnotation(NotNull.class);
-            return idNotNull;
+            return Student.class.getDeclaredField("id").getDeclaredAnnotation(Regrex.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }
 
-    public NotNull getNameNotNullAnnotation() {
+    public Regrex getNameRegrexAnnotation() {
         try {
-            NotNull nameNotNull = Student.class.getDeclaredField("name").getDeclaredAnnotation(NotNull.class);
-            return nameNotNull;
+            return Student.class.getDeclaredField("name").getDeclaredAnnotation(Regrex.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }
 
 
 
-    public NotNull getPhoneNotNullAnnotation() {
+    public Regrex getPhoneRegrexAnnotation() {
         try {
-            NotNull phoneNotNull = Student.class.getDeclaredField("phone").
-                    getDeclaredAnnotation(NotNull.class);
-            return phoneNotNull;
+            return Student.class.getDeclaredField("phone").
+                    getDeclaredAnnotation(Regrex.class);
         }
         catch (NoSuchFieldException e) {
             String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.getStackTrace());
+            LOGGER.error(message, e.fillInStackTrace());
         }
         return null;
     }

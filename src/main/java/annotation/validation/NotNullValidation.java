@@ -17,11 +17,11 @@ public class NotNullValidation extends ValidationSupporter implements Validation
      */
     @Override
     public void test(Annotation annotation, Object value, Collection<Violation> collection, Field field) {
-        NotNull notNull = (NotNull) annotation;
-        if(value == null) {
+
+        if(value == null && annotation != null) {
+            NotNull notNull = (NotNull) annotation;
             Violation existViolation = checkExistViolation(collection, field.getName());
             if(existViolation == null) {
-
                 Collection<String> messages = new ArrayList<>();
                 messages.add(notNull.message());
                 Violation violation = new Violation(value, messages, field.getName());
