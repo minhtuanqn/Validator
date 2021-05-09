@@ -28,9 +28,15 @@ public class SizeValidation extends ValidationSupporter implements ValidationRul
         else if(value.getClass() == Integer.class) {
             realValue = (Integer) value;
         }
+        if(realValue < 0) {
+            throw new IllegalArgumentException();
+        }
         int min = 1;
         if(size.min() > 0) {
             min = size.min();
+        }
+        if(min > size.max()) {
+            throw new UnsupportedOperationException();
         }
         if(realValue > size.max() || realValue < min) {
             Violation existViolation = checkExistViolation(collection, field.getName());

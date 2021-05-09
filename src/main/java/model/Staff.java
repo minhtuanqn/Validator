@@ -17,6 +17,8 @@ public class Staff {
     @Regrex(pattern = "[a-zA-Z]*", message = "Last name must be alphabetic characters only")
     public String lastName;
 
+    public Integer age;
+
     /**
      * First name of staff
      * @return
@@ -39,6 +41,14 @@ public class Staff {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     @Override
