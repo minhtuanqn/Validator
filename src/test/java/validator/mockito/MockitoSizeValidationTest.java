@@ -2,7 +2,6 @@ package validator.mockito;
 
 import annotation.Size;
 import annotation.validation.SizeValidation;
-import model.Staff;
 import model.Violation;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,27 +25,16 @@ public class MockitoSizeValidationTest {
 
     private SizeValidation sizeValidation = new SizeValidation();
 
-    private Field field;
-
-    private Field getField(String fieldName) {
-        try {
-            field  = Staff.class.getDeclaredField(fieldName);
-            return field;
-        }
-        catch (NoSuchFieldException e) {
-            String message = "Error: Cannot find field element by name\n";
-            LOGGER.error(message, e.fillInStackTrace());
-        }
-        return null;
-    }
-
     @Test
     public void whenValidate_OneFieldIsSizeViolation_ThenAddViolation() {
+        Field field = Mockito.mock(Field.class);
         Size size = Mockito.mock(Size.class);
+
+        Mockito.when(field.getName()).thenReturn("firstName");
         Mockito.when(size.min()).thenReturn(5);
         Mockito.when(size.max()).thenReturn(13);
         Mockito.when(size.message()).thenReturn("First name is from 5-13 characters");
-        sizeValidation.test(size, "12", violations, getField("firstName"));
+        sizeValidation.test(size, "12", violations, field);
 
         MockitoViolationsAssertion.create().expectField("firstName")
                 .withMessage("First name is from 5-13 characters")
@@ -55,10 +43,13 @@ public class MockitoSizeValidationTest {
 
     @Test
     public void whenValidate_NoFieldIsSizeViolation_ThenReturn() {
+        Field field = Mockito.mock(Field.class);
         Size size = Mockito.mock(Size.class);
+
+        Mockito.when(field.getName()).thenReturn("firstName");
         Mockito.when(size.max()).thenReturn(13);
         Mockito.when(size.message()).thenReturn("First name is from 1-13 characters");
-        sizeValidation.test(size, "1", violations, getField("firstName"));
+        sizeValidation.test(size, "1", violations, field);
 
         Assert.assertEquals(0, violations.size());
     }
@@ -66,11 +57,14 @@ public class MockitoSizeValidationTest {
     @Test
     public void whenValidate_OneIntegerFieldIsSizeViolation_ThenReturn() {
         Size size = Mockito.mock(Size.class);
+        Field field = Mockito.mock(Field.class);
+
+        Mockito.when(field.getName()).thenReturn("age");
         Mockito.when(size.min()).thenReturn(18);
         Mockito.when(size.max()).thenReturn(60);
         Mockito.when(size.message()).thenReturn("Age must be from 8-60");
 
-        sizeValidation.test(size, 61, violations, getField("age"));
+        sizeValidation.test(size, 61, violations, field);
         MockitoViolationsAssertion.create().expectField("age")
                 .withInvalidValue(61).withMessage("Age must be from 8-60")
                 .and().assertViolations(violations.iterator());
@@ -79,21 +73,27 @@ public class MockitoSizeValidationTest {
     @Test(expected = IllegalArgumentException.class)
     public void whenValidate_ParametersAreInvalid_ThenThrowsIllegalArgumentException() {
         Size size = Mockito.mock(Size.class);
+        Field field = Mockito.mock(Field.class);
+
+        Mockito.when(field.getName()).thenReturn("age");
         Mockito.when(size.min()).thenReturn(2);
         Mockito.when(size.max()).thenReturn(18);
         Mockito.when(size.message()).thenReturn("Age must be from 8-60");
 
-        sizeValidation.test(size, -4, violations, getField("age"));
+        sizeValidation.test(size, -4, violations, field);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void whenValidate_MinGreaterThanMaxInRule_ThenThrowsUnsupportedOperationException() {
         Size size = Mockito.mock(Size.class);
+        Field field = Mockito.mock(Field.class);
+
+        Mockito.when(field.getName()).thenReturn("age");
         Mockito.when(size.min()).thenReturn(3);
         Mockito.when(size.max()).thenReturn(2);
         Mockito.when(size.message()).thenReturn("Age must be from 8-60");
 
-        sizeValidation.test(size, 6, violations, getField("age"));
+        sizeValidation.test(size, 6, violations, field);
     }
 
 }
