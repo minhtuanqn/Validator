@@ -36,5 +36,8 @@ public class ValidationTypeDispatcher {
             ValidationRule validationObject = annotationMap.get(annotation.annotationType());
             validationObject.test(annotation, value, violations, field);
         }
+        else {
+            throw new UnsupportedOperationException();
+        }
     }
 }
